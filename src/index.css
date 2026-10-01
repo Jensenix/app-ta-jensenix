@@ -1,0 +1,161 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------
+   Design tokens. Setiap warna punya pasangan light/dark supaya tema
+   konsisten di seluruh komponen tanpa sebaran kelas dark: manual.
+------------------------------------------------------------------- */
+:root {
+  --c-canvas: #f5f6f9;
+  --c-surface: #ffffff;
+  --c-muted: #eef1f6;
+  --c-line: #e3e7ee;
+  --c-line-strong: #cfd6e2;
+  --c-ink: #101828;
+  --c-ink-soft: #667085;
+  --c-accent: #2f56e8;
+  --c-accent-ink: #1e3fbe;
+  --c-accent-soft: #eaefff;
+  --c-ok: #067647;
+  --c-ok-soft: #e7f8ef;
+  --c-warn: #b54708;
+  --c-warn-soft: #fdf3e6;
+  --shadow-panel: 0 1px 2px rgb(16 24 40 / 0.05), 0 8px 24px -12px rgb(16 24 40 / 0.18);
+  --shadow-pop: 0 24px 48px -12px rgb(16 24 40 / 0.28);
+}
+
+.dark {
+  --c-canvas: #0a0d14;
+  --c-surface: #111722;
+  --c-muted: #1a2231;
+  --c-line: #232c3c;
+  --c-line-strong: #35415a;
+  --c-ink: #e8edf6;
+  --c-ink-soft: #8d9ab1;
+  --c-accent: #7d9dff;
+  --c-accent-ink: #a8bdff;
+  --c-accent-soft: #1a2340;
+  --c-ok: #56dd9c;
+  --c-ok-soft: #10281e;
+  --c-warn: #f9b45c;
+  --c-warn-soft: #2a1e0d;
+  --shadow-panel: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 24px 48px -12px rgb(0 0 0 / 0.7);
+}
+
+@theme inline {
+  --font-sans:
+    'Inter var', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI Variable Text',
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-muted: var(--c-muted);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-ink: var(--c-ink);
+  --color-ink-soft: var(--c-ink-soft);
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-ok: var(--c-ok);
+  --color-ok-soft: var(--c-ok-soft);
+  --color-warn: var(--c-warn);
+  --color-warn-soft: var(--c-warn-soft);
+
+  /* Tinggi total header aplikasi (56px + border 1px). Offset sticky tabel
+     membaca nilai ini supaya tidak perlu menebak-nebak angka. */
+  --app-header-h: 3.5625rem;
+
+  --shadow-panel: var(--shadow-panel);
+  --shadow-pop: var(--shadow-pop);
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--c-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--c-canvas);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+    border-radius: 5px;
+  }
+
+  ::selection {
+    background-color: var(--c-accent);
+    color: #fff;
+  }
+}
+
+/* Animasi ringan, dimatikan bila pengguna memilih reduced motion. */
+@keyframes ta-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ta-drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-overlay {
+  animation: ta-overlay-in 0.16s ease-out both;
+}
+
+.animate-drawer {
+  animation: ta-drawer-in 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-overlay,
+  .animate-drawer {
+    animation: none;
+  }
+}
+
+/* Utilitas kecil */
+@utility scrollbar-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-line-strong) transparent;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Angka rata-rata supaya kolom NIM sejajar */
+@utility nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}

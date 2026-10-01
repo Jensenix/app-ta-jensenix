@@ -1,0 +1,29 @@
+{
+  "name": "data-ta-viewer",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Viewer data tugas akhir (skripsi, PKM, publikasi, proyek) dari hasil scraping MIKA",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "check": "vite-node scripts/check.ts",
+    "smoke": "vite-node scripts/smoke.tsx"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vite-node": "^6.0.0"
+  }
+}

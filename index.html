@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Menampilkan, mencari, dan memfilter data tugas akhir mahasiswa dari hasil scraping MIKA."
+    />
+    <title>Data Tugas Akhir — Viewer</title>
+    <script>
+      // Terapkan tema sebelum React hydrate agar tidak ada kedipan.
+      (function () {
+        try {
+          var saved = localStorage.getItem('ta-viewer:theme');
+          var dark = saved
+            ? saved === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {
+          /* localStorage tidak tersedia, abaikan */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
