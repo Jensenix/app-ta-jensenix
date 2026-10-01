@@ -102,3 +102,25 @@ export const LayersIcon = (p: IconProps) => (
     <path d="m3 13 9 5 9-5" />
   </svg>
 );
+
+/** Hati kosong — untuk "belum difavoritkan". */
+export const HeartIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M12 20.3 4.9 13.4a4.7 4.7 0 0 1 0-6.6 4.7 4.7 0 0 1 6.6 0l.5.5.5-.5a4.7 4.7 0 0 1 6.6 0 4.7 4.7 0 0 1 0 6.6Z" />
+  </svg>
+);
+
+/** Hati terisi — dipakai saat sudah masuk favorit. */
+export const HeartFilledIcon = (p: IconProps) => (
+  <svg {...base({ fill: 'currentColor', ...p })}>
+    <path d="M12 20.3 4.9 13.4a4.7 4.7 0 0 1 0-6.6 4.7 4.7 0 0 1 6.6 0l.5.5.5-.5a4.7 4.7 0 0 1 6.6 0 4.7 4.7 0 0 1 0 6.6Z" />
+  </svg>
+);
+
+export const TrashIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M4 7h16M10 7V5h4v2" />
+    <path d="M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12" />
+    <path d="M10 11v5M14 11v5" />
+  </svg>
+);

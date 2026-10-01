@@ -2,10 +2,12 @@ import { useEffect } from 'react';
 import type { TaRow } from '../types';
 import { statusTone } from '../lib/present';
 import { Badge } from './Badge';
-import { CloseIcon } from './Icons';
+import { CloseIcon, HeartFilledIcon, HeartIcon } from './Icons';
 
 interface Props {
   row: TaRow | null;
+  favorite: boolean;
+  onToggleFavorite: () => void;
   onClose: () => void;
 }
 
@@ -18,7 +20,7 @@ const FIELDS: Array<{ label: string; value: (row: TaRow) => string; mono?: boole
 ];
 
 /** Panel detail: bottom sheet di mobile, slide-over di desktop. */
-export function DetailDrawer({ row, onClose }: Props) {
+export function DetailDrawer({ row, favorite, onToggleFavorite, onClose }: Props) {
   useEffect(() => {
     if (!row) return;
     const onKey = (event: KeyboardEvent) => {
@@ -72,6 +74,8 @@ export function DetailDrawer({ row, onClose }: Props) {
             <Badge tone="neutral">{row.jenis_jalur}</Badge>
           </div>
 
+          <FavoriteButton favorite={favorite} onToggle={onToggleFavorite} />
+
           <dl className="space-y-4">
             {FIELDS.map((field) => {
               const value = field.value(row);
@@ -96,6 +100,32 @@ export function DetailDrawer({ row, onClose }: Props) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** Tombol hati di dalam detail: satu-satunya tempat favorit ditambah. */
+function FavoriteButton({
+  favorite,
+  onToggle,
+}: {
+  favorite: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={favorite}
+      aria-label={favorite ? 'Hapus dari favorit' : 'Tambahkan ke favorit'}
+      className={`mb-4 flex w-full items-center justify-center gap-2 rounded-lg border py-2 text-xs font-medium transition-colors ${
+        favorite
+          ? 'border-fav/40 bg-fav-soft text-fav hover:border-fav/60'
+          : 'border-line bg-muted/60 text-ink-soft hover:border-line-strong hover:text-ink'
+      }`}
+    >
+      {favorite ? <HeartFilledIcon width={15} height={15} /> : <HeartIcon width={15} height={15} />}
+      <span>{favorite ? 'Sudah difavoritkan' : 'Tambahkan ke favorit'}</span>
+    </button>
   );
 }
 

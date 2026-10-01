@@ -21,6 +21,8 @@
   --c-ok-soft: #e7f8ef;
   --c-warn: #b54708;
   --c-warn-soft: #fdf3e6;
+  --c-fav: #e11d48;
+  --c-fav-soft: #ffe4ec;
   --shadow-panel: 0 1px 2px rgb(16 24 40 / 0.05), 0 8px 24px -12px rgb(16 24 40 / 0.18);
   --shadow-pop: 0 24px 48px -12px rgb(16 24 40 / 0.28);
 }
@@ -40,6 +42,8 @@
   --c-ok-soft: #10281e;
   --c-warn: #f9b45c;
   --c-warn-soft: #2a1e0d;
+  --c-fav: #fb7185;
+  --c-fav-soft: #33121b;
   --shadow-panel: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
   --shadow-pop: 0 24px 48px -12px rgb(0 0 0 / 0.7);
 }
@@ -64,6 +68,8 @@
   --color-ok-soft: var(--c-ok-soft);
   --color-warn: var(--c-warn);
   --color-warn-soft: var(--c-warn-soft);
+  --color-fav: var(--c-fav);
+  --color-fav-soft: var(--c-fav-soft);
 
   /* Tinggi total header aplikasi (56px + border 1px). Offset sticky tabel
      membaca nilai ini supaya tidak perlu menebak-nebak angka. */
@@ -134,9 +140,44 @@
   animation: ta-drawer-in 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+@keyframes ta-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-panel {
+  animation: ta-panel-in 0.16s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: top right;
+}
+
+/* Detak kecil saat hati ditambahkan/diagram ulang. */
+@keyframes ta-fav-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.28);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-fav-pop {
+  animation: ta-fav-pop 0.28s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-overlay,
-  .animate-drawer {
+  .animate-drawer,
+  .animate-panel,
+  .animate-fav-pop {
     animation: none;
   }
 }

@@ -1,16 +1,34 @@
 import { useRef } from 'react';
-import { DownloadIcon, LayersIcon, MoonIcon, SunIcon, UploadIcon } from './Icons';
+import type { TaRow } from '../types';
 import { nf } from '../lib/present';
+import { FavoritesPanel } from './FavoritesPanel';
+import {
+  DownloadIcon,
+  HeartFilledIcon,
+  HeartIcon,
+  LayersIcon,
+  MoonIcon,
+  SunIcon,
+  UploadIcon,
+} from './Icons';
 
 interface Props {
   sourceName: string;
   rowCount: number;
   matched: number;
   dark: boolean;
+  favoritesOpen: boolean;
+  favorites: TaRow[];
+  onToggleFavorites: () => void;
+  onOpenFavorite: (row: TaRow) => void;
+  onRemoveFavorite: (nim: string) => void;
+  onClearFavorites: () => void;
   onToggleTheme: () => void;
   onPickFile: (file: File) => void;
   onExportCsv: () => void;
   onExportJson: () => void;
+  onExportFavoritesCsv: () => void;
+  onExportFavoritesJson: () => void;
 }
 
 export function Header({
@@ -18,13 +36,22 @@ export function Header({
   rowCount,
   matched,
   dark,
+  favoritesOpen,
+  favorites,
+  onToggleFavorites,
+  onOpenFavorite,
+  onRemoveFavorite,
+  onClearFavorites,
   onToggleTheme,
   onPickFile,
   onExportCsv,
   onExportJson,
+  onExportFavoritesCsv,
+  onExportFavoritesJson,
 }: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const exportDisabled = matched === 0;
+  const favoriteCount = favorites.length;
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur">
@@ -82,6 +109,48 @@ export function Header({
               onClick={onExportJson}
               text="JSON"
             />
+          </div>
+
+          {/* Tombol favorit duduk sebaris dengan ekspor CSV/JSON dan ganti mode.
+              `data-fav-root` menandai area tombol+panel, supaya klik di panel
+              tidak dianggap "klik di luar" yang menutup panel itu sendiri. */}
+          <div className="relative" data-fav-root="">
+            <button
+              type="button"
+              onClick={onToggleFavorites}
+              aria-expanded={favoritesOpen}
+              aria-haspopup="dialog"
+              title="Favorit"
+              aria-label={`Favorit, ${nf.format(favoriteCount)} data tersimpan`}
+              className={`relative flex size-9 items-center justify-center rounded-lg border bg-surface transition-colors ${
+                favoriteCount > 0 || favoritesOpen
+                  ? 'border-fav/40 text-fav'
+                  : 'border-line text-ink-soft hover:border-line-strong hover:text-ink'
+              }`}
+            >
+              {favoriteCount > 0 ? (
+                <HeartFilledIcon width={15} height={15} />
+              ) : (
+                <HeartIcon width={15} height={15} />
+              )}
+              {favoriteCount > 0 && (
+                <span className="nums absolute -top-1.5 -right-1.5 min-w-4 rounded-full bg-fav px-1 text-center text-[10px] leading-4 font-semibold text-white tabular-nums">
+                  {favoriteCount > 99 ? '99+' : favoriteCount}
+                </span>
+              )}
+            </button>
+
+            {favoritesOpen && (
+              <FavoritesPanel
+                rows={favorites}
+                onClose={onToggleFavorites}
+                onOpen={onOpenFavorite}
+                onRemove={onRemoveFavorite}
+                onClear={onClearFavorites}
+                onExportCsv={onExportFavoritesCsv}
+                onExportJson={onExportFavoritesJson}
+              />
+            )}
           </div>
 
           <button

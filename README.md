@@ -16,7 +16,7 @@ Perintah lain:
 ```bash
 npm run build      # typecheck + bundle produksi ke dist/
 npm run preview    # jalankan hasil build
-npm run check      # 37 tes logika filter/sort/paginasi/CSV
+npm run check      # 52 tes logika filter/sort/paginasi/CSV/favorit
 npm run smoke      # render App tanpa browser, cek tidak ada error
 npm run typecheck  # tsc --noEmit
 ```
@@ -60,6 +60,24 @@ tetap tampil apa adanya di tabel.
 Jumlah pada chip selalu dihitung dari seluruh data, bukan dari hasil
 filter, supaya angka tidak menyusut saat filter lain aktif.
 
+## Fitur favorit
+
+Klik baris atau kartu untuk membuka detail mahasiswa, lalu tekan **hati**
+di dalam detail. Data itu masuk ke daftar favorit.
+
+- Tombol hati di header — sebaris dengan ekspor CSV/JSON dan ganti mode —
+  menampilkan jumlah favorit di badge. Membukanya dropping panel berisi
+  seluruh data yang ditandai.
+- Dari panel: klik satu item untuk membuka detailnya, tekan hati merah
+  untuk menghapus, atau ekspor langsung ke CSV/JSON, atau kosongkan
+  semua. Tekan `Esc` atau klik di luar untuk menutup.
+- Baris dan kartu yang sudah difavoritkan diberi hati merah kecil di
+  sebelah NIM, jadi mudah dikenali saat scrolling.
+- Favorit disimpan sebagai daftar NIM di `localStorage`
+  (`ta-viewer:favorites`), bukan objek baris utuh. Efeknya: favorit tetap
+  berlaku walau file JSON lain dimuat, dan NIM yang sudah tidak ada di
+  data akan dilewati diam-diam oleh panel.
+
 ## Fitur lain
 
 - **Urutkan** — klik judul kolom: NIM, Nama, Judul, Jalur, Status.
@@ -68,6 +86,7 @@ filter, supaya angka tidak menyusut saat filter lain aktif.
   Indonesia dan Inggris. Tekan `Esc` untuk menutup.
 - **Ekspor** — CSV (pemisah `;` + BOM UTF-8, langsung rapi di Excel) dan
   JSON, keduanya hanya berisi baris hasil filter, sudah terurut.
+- **Favorit** — lihat di bawah.
 - **Tema** — terang/gelap, mengikuti preferensi sistem lalu disimpan di
   `localStorage`.
 - **Paginasi** — 25/50/100 baris per halaman.
@@ -81,15 +100,17 @@ src/
   lib/
     data.ts               normalisasi JSON mentah -> TaRow
     filters.ts            filter, facet, sort, paginasi (murni, tanpa React)
+    favorites.ts          NIM favorit + persistensi localStorage (murni)
     download.ts           CSV/JSON + trigger unduhan
     present.ts            pemetaan warna status, format angka
   components/
-    Header.tsx            judul, muat file, ekspor, tema
+    Header.tsx            judul, muat file, ekspor, tombol favorit, tema
+    FavoritesPanel.tsx    panel daftar favorit dari header
     StatStrip.tsx         kartu ringkasan
     FilterPanel.tsx       kolom pencarian + chip
     DataTable.tsx         tabel (>= 768px)
     CardList.tsx          kartu (< 768px)
-    DetailDrawer.tsx      panel detail
+    DetailDrawer.tsx      panel detail + tombol hati
     Pagination.tsx        navigasi halaman
     EmptyState.tsx        keadaan kosong
     Badge.tsx, Icons.tsx  komponen kecil

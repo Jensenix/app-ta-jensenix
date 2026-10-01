@@ -1,13 +1,14 @@
 import type { SortDir, SortKey, TaRow } from '../types';
 import { statusTone } from '../lib/present';
 import { Badge } from './Badge';
-import { SortIcon } from './Icons';
+import { HeartFilledIcon, SortIcon } from './Icons';
 
 interface Props {
   rows: TaRow[];
   startIndex: number;
   sortKey: SortKey;
   sortDir: SortDir;
+  favorites: Set<string>;
   onSort: (key: SortKey) => void;
   onSelect: (row: TaRow) => void;
 }
@@ -27,7 +28,7 @@ const COLUMNS: Array<{
 ];
 
 /** Tabel padat untuk layar lebar (>= md). */
-export function DataTable({ rows, startIndex, sortKey, sortDir, onSort, onSelect }: Props) {
+export function DataTable({ rows, startIndex, sortKey, sortDir, favorites, onSort, onSelect }: Props) {
   return (
     <div className="hidden md:block">
       {/* border-separate (bukan border-collapse) + cell sendiri yang bikin garis:
@@ -88,7 +89,19 @@ export function DataTable({ rows, startIndex, sortKey, sortDir, onSort, onSelect
               <td className="nums px-3 py-2.5 text-right text-xs text-ink-soft/80">
                 {startIndex + index + 1}
               </td>
-              <td className="nums px-3 py-2.5 font-medium text-ink">{row.nim || '—'}</td>
+              <td className="nums px-3 py-2.5 font-medium text-ink">
+                <span className="inline-flex items-center gap-1">
+                  {favorites.has(row.nim) && (
+                    <HeartFilledIcon
+                      width={12}
+                      height={12}
+                      className="shrink-0 text-fav"
+                      aria-label="Favorit"
+                    />
+                  )}
+                  {row.nim || '—'}
+                </span>
+              </td>
               <td className="truncate px-3 py-2.5 text-ink" title={row.nama}>
                 {row.nama}
               </td>

@@ -11,6 +11,12 @@ import {
   sortRows,
 } from './lib/filters';
 import { exportCsv, exportJson, timestampedName } from './lib/download';
+import {
+  loadFavoriteNims,
+  resolveFavoriteRows,
+  saveFavoriteNims,
+  toggleFavoriteNim,
+} from './lib/favorites';
 import { Header } from './components/Header';
 import { StatStrip } from './components/StatStrip';
 import { FilterPanel } from './components/FilterPanel';
@@ -23,6 +29,8 @@ import { CloseIcon } from './components/Icons';
 
 const SOURCE_NAME = 'data_ta_filter_500.json';
 const THEME_KEY = 'ta-viewer:theme';
+/* Ekspor favorit memakai nama sendiri, bukan mengikuti nama file sumber. */
+const FAVORITE_FILE_NAME = 'favorit-tugas-akhir';
 
 function initialRows(): TaRow[] {
   return normalizeRows(rawData);
@@ -45,11 +53,19 @@ export default function App() {
   const [selected, setSelected] = useState<TaRow | null>(null);
   const [dark, setDark] = useState(initialDark);
   const [notice, setNotice] = useState<string | null>(null);
+  /* Favorit disimpan sebagai NIM, bukan objek baris, supaya tetap berlaku
+     walau data dimuat ulang dari file JSON lain. */
+  const [favoriteNims, setFavoriteNims] = useState<string[]>(loadFavoriteNims);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
     localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light');
   }, [dark]);
+
+  useEffect(() => {
+    saveFavoriteNims(favoriteNims);
+  }, [favoriteNims]);
 
   /* Facet dihitung dari seluruh data, bukan dari hasil filter — supaya
      angka dalam chip tidak ikut menyusut saat filter lain aktif. */
@@ -58,6 +74,12 @@ export default function App() {
   const uniqueJudul = useMemo(
     () => new Set(rows.map((row) => row.judul_tugas_akhir_program_studi)).size,
     [rows],
+  );
+
+  const favoriteSet = useMemo(() => new Set(favoriteNims), [favoriteNims]);
+  const favoriteRows = useMemo(
+    () => resolveFavoriteRows(rows, favoriteNims),
+    [rows, favoriteNims],
   );
 
   const filtered = useMemo(() => filterRows(rows, filters), [rows, filters]);
@@ -119,6 +141,23 @@ export default function App() {
     [],
   );
 
+  const toggleFavorite = useCallback((row: TaRow) => {
+    setFavoriteNims((prev) => toggleFavoriteNim(prev, row.nim));
+  }, []);
+
+  const removeFavorite = useCallback((nim: string) => {
+    setFavoriteNims((prev) => prev.filter((item) => item !== nim));
+  }, []);
+
+  const clearFavorites = useCallback(() => setFavoriteNims([]), []);
+
+  /* Buka detail dari panel favorit, lalu tutup panelnya supaya tidak
+     menumpuk dua panel di layar yang sama. */
+  const openFavorite = useCallback((row: TaRow) => {
+    setFavoritesOpen(false);
+    setSelected(row);
+  }, []);
+
   const loadFile = useCallback(async (file: File) => {
     try {
       const text = await file.text();
@@ -143,6 +182,12 @@ export default function App() {
     return timestampedName(slug.slice(0, 40));
   }, [sourceName]);
 
+  /* Membuka detail dari tabel/kartu juga menutup panel favorit. */
+  const selectRow = useCallback((row: TaRow) => {
+    setFavoritesOpen(false);
+    setSelected(row);
+  }, []);
+
   return (
     <div className="min-h-dvh bg-canvas">
       <Header
@@ -150,10 +195,18 @@ export default function App() {
         rowCount={rows.length}
         matched={sorted.length}
         dark={dark}
+        favoritesOpen={favoritesOpen}
+        favorites={favoriteRows}
+        onToggleFavorites={() => setFavoritesOpen((value) => !value)}
+        onOpenFavorite={openFavorite}
+        onRemoveFavorite={removeFavorite}
+        onClearFavorites={clearFavorites}
         onToggleTheme={() => setDark((value) => !value)}
         onPickFile={loadFile}
         onExportCsv={() => exportCsv(sorted, exportName())}
         onExportJson={() => exportJson(sorted, exportName())}
+        onExportFavoritesCsv={() => exportCsv(favoriteRows, FAVORITE_FILE_NAME)}
+        onExportFavoritesJson={() => exportJson(favoriteRows, FAVORITE_FILE_NAME)}
       />
 
       <main className="mx-auto flex max-w-[1400px] flex-col gap-3 px-3 py-4 sm:gap-4 sm:px-5 sm:py-5">
@@ -211,10 +264,16 @@ export default function App() {
                 startIndex={startIndex}
                 sortKey={sortKey}
                 sortDir={sortDir}
+                favorites={favoriteSet}
                 onSort={handleSort}
-                onSelect={setSelected}
+                onSelect={selectRow}
               />
-              <CardList rows={visibleRows} startIndex={startIndex} onSelect={setSelected} />
+              <CardList
+                rows={visibleRows}
+                startIndex={startIndex}
+                favorites={favoriteSet}
+                onSelect={selectRow}
+              />
               <Pagination
                 page={currentPage}
                 totalPages={totalPages}
@@ -231,7 +290,8 @@ export default function App() {
         </section>
 
         <p className="pb-2 text-center text-[11px] leading-relaxed text-ink-soft/80">
-          Sumber data: hasil scraping API MIKA · klik baris atau kartu untuk melihat detail
+          Sumber data: hasil scraping API MIKA · klik baris atau kartu untuk melihat detail · tekan
+          hati di detail untuk menandai favorit
           {sortKey !== 'nim' || sortDir !== 'asc' ? (
             <>
               {' '}
@@ -242,7 +302,12 @@ export default function App() {
         </p>
       </main>
 
-      <DetailDrawer row={selected} onClose={() => setSelected(null)} />
+      <DetailDrawer
+        row={selected}
+        favorite={selected ? favoriteSet.has(selected.nim) : false}
+        onToggleFavorite={() => selected && toggleFavorite(selected)}
+        onClose={() => setSelected(null)}
+      />
     </div>
   );
 }

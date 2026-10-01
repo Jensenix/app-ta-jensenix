@@ -1,16 +1,18 @@
 import type { TaRow } from '../types';
 import { statusTone } from '../lib/present';
 import { Badge } from './Badge';
-import { ChevronRightIcon } from './Icons';
+import { ChevronRightIcon, HeartFilledIcon } from './Icons';
 
 /** Kartu bertumpuk sebagai pengganti tabel di layar kecil (< md). */
 export function CardList({
   rows,
   startIndex,
+  favorites,
   onSelect,
 }: {
   rows: TaRow[];
   startIndex: number;
+  favorites: Set<string>;
   onSelect: (row: TaRow) => void;
 }) {
   return (
@@ -27,6 +29,14 @@ export function CardList({
                 <span className="nums text-xs font-semibold text-accent">
                   {startIndex + index + 1}. {row.nim}
                 </span>
+                {favorites.has(row.nim) && (
+                  <HeartFilledIcon
+                    width={12}
+                    height={12}
+                    className="shrink-0 text-fav"
+                    aria-label="Favorit"
+                  />
+                )}
                 <Badge tone="neutral">{row.jenis_jalur}</Badge>
                 <Badge tone={statusTone(row.status)}>{row.status}</Badge>
               </div>
