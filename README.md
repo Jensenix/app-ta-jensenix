@@ -97,6 +97,33 @@ Tautan sudah divalidasi saat normalisasi: skema `http`/`https` saja yang
 diterima, skema yang hilang dikasih awalan `https://`, dan URL rusak
 dianggap tidak ada.
 
+## Ringkasan data di mobile
+
+Kartu ringkasan di atas tabel diringkas di layar kecil. Mobile (2 kolom)
+hanya menampilkan 4 kartu:
+
+| Posisi      | Kartu                                  |
+| ----------- | -------------------------------------- |
+| atas kiri   | **Total data**                         |
+| atas kanan  | **Selesai**                            |
+| bawah kiri  | **Sedang ditampilkan**                |
+| bawah kanan | **Lainnya** — ringkasan status sisanya |
+
+Kartu **Lainnya** juga jadi sakelar: ketuk untuk membuka kartu status yang
+tadinya tertutup, ketuk lagi untuk menutupnya kembali ke tampilan 4 kartu.
+Angka besar kartu itu adalah jumlah data dari seluruh status selain
+*Selesai*, dan catatan kecilnya menyebut status sisanya secara berurutan
+dengan pemotong `truncate` (mis. `Permohonan TA Non-Aktif +9`). Saat terbuka,
+catatan berubah menjadi "ketuk untuk tutup" dan chevronnya berputar.
+
+Semua kartu status tetap bisa diklik untuk memfilter, baik yang terlihat
+maupun yang tersembunyi.
+
+Di desktop (>= `lg`) tidak ada yang disembunyikan: seluruh kartu status
+tampil dalam 4 kolom seperti semula dan kartu *Lainnya* tidak muncul.
+Susunan mobile diatur lewat properti CSS `order`, jadi urutan DOM tetap
+mengikuti urutan desktop dan tidak perlu dua markah terpisah.
+
 ## Fitur lain
 
 - **Urutkan** — klik judul kolom: NIM, Nama, Judul, Jalur, Status.

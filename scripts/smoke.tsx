@@ -67,6 +67,21 @@ expect('tema gelap siap (kelas .dark)', html.includes('class="dark') || true);
 expect('tidak ada teks "undefined"', !html.includes('undefined'));
 expect('tidak ada teks "NaN"', !html.includes('NaN'));
 
+/* --- ringkasan data (StatStrip) --- */
+import { countFacets } from '../src/lib/filters';
+const statusFacets = countFacets(allRows, 'status');
+const selesaiCount = statusFacets.find((f) => /selesai/i.test(f.value))?.count ?? 0;
+const lainCount = allRows.length - selesaiCount;
+expect('4 kartu utama mobile ada', html.includes('Total data') && html.includes('Sedang ditampilkan') && html.includes('Lainnya'));
+expect('kartu Selesai jadi slot sendiri', html.includes('>Selesai<'));
+expect('kartu Lainnya menjumlahkan status selain Selesai', html.includes(`>${nf.format(lainCount)}<`), `${nf.format(lainCount)} dari ${nf.format(allRows.length)} baris`);
+expect('kartu Lainnya dalam keadaan tertutup', html.includes('aria-expanded="false"'));
+expect('kartu Lainnya diringkas terpotong', html.includes('truncate text-[11px] font-medium text-ink-soft'));
+expect('status lain disembunyikan di mobile saja', html.includes('hidden lg:order-none lg:block'));
+expect('kartu Lainnya tidak muncul di desktop', html.includes('lg:hidden'));
+expect('semua status tetap ada di DOM untuk desktop', statusFacets.every((f) => html.includes(`title="Filter status: ${f.value}"`)));
+expect('semua status punya kartu', (html.match(/title="Filter status:/g) ?? []).length === statusFacets.length);
+
 /* --- tautan repository --- */
 /* Kolom repository ada di tabel (desktop) dan di baris badge (mobile), jadi
    satu blok HTML memuat keduanya. */
