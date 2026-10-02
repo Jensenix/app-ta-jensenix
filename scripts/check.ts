@@ -45,6 +45,28 @@ check('nim unik semua terisi', rows.every((r) => r.nim.length > 0));
 check('nama tanpa spasi ganda / tepi', rows.every((r) => r.nama === r.nama.trim()));
 check('judul selalu ada', rows.every((r) => r.judul_tugas_akhir_program_studi.length > 0));
 
+/* --- repository --- */
+const denganLink = rows.filter((r) => r.repository_uri !== '');
+check('ada baris bertautan repository', denganLink.length > 0, `${denganLink.length} dari ${TOTAL} baris`);
+check('baris tanpa repository jadi string kosong', rows.every((r) => typeof r.repository_uri === 'string'));
+check(
+  'semua tautan memakai http/https',
+  denganLink.every((r) => /^https?:\/\/.+/.test(r.repository_uri)),
+);
+check(
+  'tautan bisa di-parse sebagai URL',
+  denganLink.every((r) => {
+    try {
+      return Boolean(new URL(r.repository_uri).hostname);
+    } catch {
+      return false;
+    }
+  }),
+);
+check('repository dengan tautan jelek ditolak', normalizeRows([{ nim: 1, repository_uri: 'http://' }])[0].repository_uri === '');
+check('repository non-http ditolak', normalizeRows([{ nim: 1, repository_uri: 'javascript:alert(1)' }])[0].repository_uri === '');
+check('repository tanpa skema dapat https', normalizeRows([{ nim: 1, repository_uri: 'repository.mikroskil.ac.id/id/eprint/1' }])[0].repository_uri === 'https://repository.mikroskil.ac.id/id/eprint/1');
+
 /* --- facet --- */
 const jalur = countFacets(rows, 'jenis_jalur');
 const status = countFacets(rows, 'status');

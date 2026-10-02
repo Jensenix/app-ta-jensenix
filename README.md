@@ -16,7 +16,7 @@ Perintah lain:
 ```bash
 npm run build      # typecheck + bundle produksi ke dist/
 npm run preview    # jalankan hasil build
-npm run check      # 52 tes logika filter/sort/paginasi/CSV/favorit
+npm run check      # 58 tes logika filter/sort/paginasi/CSV/favorit/repository
 npm run smoke      # render App tanpa browser, cek tidak ada error
 npm run typecheck  # tsc --noEmit
 ```
@@ -35,6 +35,7 @@ dari `../data_ta_filter_500.json`). Struktur tiap baris:
 | `judul_inggris`                  | string \| null  | boleh kosong                             |
 | `status`                         | string          | mis. `Selesai`, `Menunggu Seminar`       |
 | `jenis_jalur`                    | string          | mis. `Skripsi`, `Proyek`, `PKM`, `Publikasi` |
+| `repository_uri`                 | string \| null  | tautan repository; boleh kosong          |
 
 Untuk memuat hasil scraping yang lebih baru, klik tombol **muat** di
 kepala aplikasi dan pilih file `.json` — array dengan struktur yang sama.
@@ -78,6 +79,24 @@ di dalam detail. Data itu masuk ke daftar favorit.
   berlaku walau file JSON lain dimuat, dan NIM yang sudah tidak ada di
   data akan dilewati diam-diam oleh panel.
 
+## Fitur tautan repository
+
+Kolom `repository_uri` dari hasil scraping dipakai jadi tombol kertas kecil
+yang membuka repository tugas akhir di tab baru.
+
+- **Desktop** — kolom tipis sendiri di antara *Judul tugas akhir* dan
+  *Jalur*. Ikon monokrom, abu-abu seperti teks sekilas, membiru saat hover.
+- **Mobile** — tombol yang sama menempel di kanan baris badge
+  jalur + status pada tiap kartu.
+- Klik tombol tidak ikut membuka panel detail, meski baris/kartu itu sendiri
+  bisa diklik.
+- Baris tanpa repository (data mentahnya `null`) tidak mendapat tombol sama
+  sekali; di tabel selnya dibiarkan kosong supaya kolom tetap lurus.
+
+Tautan sudah divalidasi saat normalisasi: skema `http`/`https` saja yang
+diterima, skema yang hilang dikasih awalan `https://`, dan URL rusak
+dianggap tidak ada.
+
 ## Fitur lain
 
 - **Urutkan** — klik judul kolom: NIM, Nama, Judul, Jalur, Status.
@@ -113,6 +132,7 @@ src/
     DetailDrawer.tsx      panel detail + tombol hati
     Pagination.tsx        navigasi halaman
     EmptyState.tsx        keadaan kosong
+    RepositoryLink.tsx    tombol kertas ke repository (tabel + kartu)
     Badge.tsx, Icons.tsx  komponen kecil
 scripts/
   check.ts                tes logika

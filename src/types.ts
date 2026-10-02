@@ -7,6 +7,12 @@ export interface TaRow {
   status: string;
   judul_tugas_akhir_program_studi: string;
   jenis_jalur: string;
+  /**
+   * Tautan repository tugas akhir. String kosong berarti tidak ada tautan
+   * (data mentah null, atau URL-nya tidak bisa dibaca) — komponen bisa
+   * membedakan "tidak ada repository" tanpa cek nulliness.
+   */
+  repository_uri: string;
 }
 
 export type SortKey = 'nim' | 'nama' | 'judul' | 'jenis_jalur' | 'status';

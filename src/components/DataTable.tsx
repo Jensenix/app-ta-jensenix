@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react';
 import type { SortDir, SortKey, TaRow } from '../types';
 import { statusTone } from '../lib/present';
 import { Badge } from './Badge';
-import { HeartFilledIcon, SortIcon } from './Icons';
+import { DocumentIcon, HeartFilledIcon, SortIcon } from './Icons';
+import { RepositoryLink } from './RepositoryLink';
 
 interface Props {
   rows: TaRow[];
@@ -18,11 +20,21 @@ const COLUMNS: Array<{
   label: string;
   className?: string;
   headerClass?: string;
+  /** Isi header sendiri (mis. ikon) — label tetap dipakai sebagai nama aksesibel. */
+  header?: ReactNode;
 }> = [
   { key: null, label: '#', className: 'w-12', headerClass: 'text-right' },
   { key: 'nim', label: 'NIM', className: 'w-[7.5rem]' },
   { key: 'nama', label: 'Nama mahasiswa', className: 'w-[13rem]' },
   { key: 'judul', label: 'Judul tugas akhir' },
+  /* Kolom tipis di antara judul dan jalur: tempat tombol repository. */
+  {
+    key: null,
+    label: 'Repository',
+    className: 'w-11',
+    headerClass: 'text-center',
+    header: <DocumentIcon width={12} height={12} className="mx-auto" />,
+  },
   { key: 'jenis_jalur', label: 'Jalur', className: 'hidden w-[7rem] lg:table-cell' },
   { key: 'status', label: 'Status', className: 'w-[9.5rem]' },
 ];
@@ -47,6 +59,8 @@ export function DataTable({ rows, startIndex, sortKey, sortDir, favorites, onSor
                   aria-sort={
                     active ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined
                   }
+                  /* Kolom berikon tidak punya teks; label jadi nama aksesibel. */
+                  aria-label={column.header ? column.label : undefined}
                   className={`border-b border-line px-3 py-2.5 text-xs font-semibold text-ink-soft ${
                     column.className ?? ''
                   } ${column.headerClass ?? ''}`}
@@ -63,7 +77,7 @@ export function DataTable({ rows, startIndex, sortKey, sortDir, favorites, onSor
                       <SortIcon direction={active ? sortDir : 'none'} />
                     </button>
                   ) : (
-                    column.label
+                    (column.header ?? column.label)
                   )}
                 </th>
               );
@@ -109,6 +123,9 @@ export function DataTable({ rows, startIndex, sortKey, sortDir, favorites, onSor
                 <p className="line-clamp-2 text-[13px] leading-snug text-ink" title={row.judul_tugas_akhir_program_studi}>
                   {row.judul_tugas_akhir_program_studi}
                 </p>
+              </td>
+              <td className="px-3 py-2.5 text-center">
+                <RepositoryLink href={row.repository_uri} nim={row.nim} />
               </td>
               <td className="hidden px-3 py-2.5 lg:table-cell">
                 <Badge tone="neutral">{row.jenis_jalur}</Badge>

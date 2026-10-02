@@ -124,3 +124,12 @@ export const TrashIcon = (p: IconProps) => (
     <path d="M10 11v5M14 11v5" />
   </svg>
 );
+
+/** Lembar kertas bergaris — penanda tautan ke repository tugas akhir. */
+export const DocumentIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
+    <path d="M14 3v3a2 2 0 0 0 2 2h3" />
+    <path d="M9 12h6M9 16h4" />
+  </svg>
+);

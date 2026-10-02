@@ -67,6 +67,24 @@ expect('tema gelap siap (kelas .dark)', html.includes('class="dark') || true);
 expect('tidak ada teks "undefined"', !html.includes('undefined'));
 expect('tidak ada teks "NaN"', !html.includes('NaN'));
 
+/* --- tautan repository --- */
+/* Kolom repository ada di tabel (desktop) dan di baris badge (mobile), jadi
+   satu blok HTML memuat keduanya. */
+const linkTags = html.match(/<a [^>]*repository\.mikroskil\.ac\.id[^>]*>/g) ?? [];
+const visible = [...allRows]
+  .sort((a, b) => a.nim.localeCompare(b.nim, 'id', { numeric: true }))
+  .slice(0, 25)
+  .filter((r) => r.repository_uri);
+expect('tautan repository dirender', linkTags.length === visible.length * 2, `${linkTags.length} tautan untuk ${visible.length} baris bertautan`);
+expect('tautan repository membuka tab baru', linkTags.length > 0 && linkTags.every((tag) => tag.includes('target="_blank"')));
+expect('tautan repository aman (rel noopener)', linkTags.length > 0 && linkTags.every((tag) => tag.includes('rel="noopener noreferrer"')));
+expect('kolom repository ada di header tabel', html.includes('aria-label="Repository"'));
+expect(
+  'tautan punya teks aksesibel',
+  html.includes(`aria-label="Buka repository tugas akhir ${visible[0]?.nim} di tab baru"`),
+);
+expect('baris tanpa repository tidak dapat tautan', !html.includes('>Buka repository tugas akhir — </a>'));
+
 /* Halaman pertama = 25 NIM terkecil (sort default NIM asc). */
 import { nf } from '../src/lib/present';
 expect('NIM terkecil tampil', html.includes(favoriteNims[0]));

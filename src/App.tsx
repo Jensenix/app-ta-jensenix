@@ -290,8 +290,8 @@ export default function App() {
         </section>
 
         <p className="pb-2 text-center text-[11px] leading-relaxed text-ink-soft/80">
-          Sumber data: hasil scraping API MIKA · klik baris atau kartu untuk melihat detail · tekan
-          hati di detail untuk menandai favorit
+          Sumber data: hasil scraping API MIKA · klik baris atau kartu untuk melihat detail · klik
+          ikon kertas untuk membuka repository · tekan hati di detail untuk menandai favorit
           {sortKey !== 'nim' || sortDir !== 'asc' ? (
             <>
               {' '}
